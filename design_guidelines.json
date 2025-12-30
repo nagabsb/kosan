@@ -1,0 +1,193 @@
+{
+  "brand": {
+    "name": "Kostify",
+    "identity": "Modern, Efficient, Tropical Tech",
+    "description": "The #1 Property Management System for Indonesian Kost Owners.",
+    "emotional_tone": "Trust, Growth (Cuan), Simplicity"
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Plus Jakarta Sans, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "scale": {
+      "h1": "text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight",
+      "h2": "text-3xl md:text-4xl font-bold tracking-tight",
+      "h3": "text-2xl font-semibold tracking-tight",
+      "body_lg": "text-lg leading-relaxed",
+      "body_base": "text-base leading-relaxed",
+      "caption": "text-sm text-muted-foreground"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "name": "Nusantara Teal",
+        "hex": "#0891b2",
+        "tailwind": "cyan-600",
+        "usage": "Primary buttons, active states, brand accents"
+      },
+      "secondary": {
+        "name": "Sunset Orange",
+        "hex": "#f97316",
+        "tailwind": "orange-500",
+        "usage": "Call to actions (CTAs), alerts, highlights"
+      },
+      "background": {
+        "light": "#F8FAFC",
+        "dark": "#020617",
+        "card_light": "#FFFFFF",
+        "card_dark": "#0F172A"
+      },
+      "text": {
+        "primary": "#0F172A",
+        "secondary": "#64748B",
+        "inverse": "#FFFFFF"
+      },
+      "status": {
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444",
+        "info": "#3B82F6"
+      }
+    },
+    "gradients": {
+      "hero": "bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-900 dark:to-slate-950",
+      "card_hover": "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "px-4 md:px-6 lg:px-8",
+      "section_gap": "py-12 md:py-24",
+      "component_gap": "gap-4 md:gap-6"
+    },
+    "grids": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "landing_features": "grid grid-cols-1 md:grid-cols-3 gap-8",
+      "bento": "grid grid-cols-1 md:grid-cols-4 auto-rows-[minmax(180px,auto)] gap-4"
+    },
+    "containers": {
+      "main": "max-w-7xl mx-auto",
+      "narrow": "max-w-3xl mx-auto"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-cyan-600 hover:bg-cyan-700 text-white shadow-sm rounded-lg px-6 py-2.5 font-medium transition-all active:scale-95",
+      "secondary": "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 shadow-sm rounded-lg px-6 py-2.5 font-medium transition-all",
+      "ghost": "hover:bg-slate-100 text-slate-700 rounded-lg px-4 py-2 transition-colors",
+      "destructive": "bg-red-600 hover:bg-red-700 text-white rounded-lg px-6 py-2.5 font-medium"
+    },
+    "cards": {
+      "base": "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6",
+      "hover": "hover:shadow-md transition-shadow duration-200",
+      "interactive": "cursor-pointer hover:border-cyan-500/50 hover:ring-2 hover:ring-cyan-500/10 transition-all"
+    },
+    "inputs": {
+      "base": "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "badges": {
+      "success": "bg-emerald-100 text-emerald-700 border-emerald-200",
+      "warning": "bg-amber-100 text-amber-700 border-amber-200",
+      "error": "bg-red-100 text-red-700 border-red-200",
+      "neutral": "bg-slate-100 text-slate-700 border-slate-200"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "soft": "shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+      "medium": "shadow-[0_8px_24px_rgba(0,0,0,0.08)]",
+      "glow": "shadow-[0_0_20px_rgba(8,145,178,0.3)]"
+    },
+    "borders": {
+      "subtle": "border border-slate-200 dark:border-slate-800",
+      "active": "border-cyan-500"
+    },
+    "radius": {
+      "default": "rounded-lg",
+      "large": "rounded-xl",
+      "pill": "rounded-full"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bedroom": {
+        "url": "https://images.pexels.com/photos/35355792/pexels-photo-35355792.jpeg",
+        "alt": "Modern minimalist kost bedroom interior",
+        "usage": "Landing page hero or room detail example"
+      },
+      "happy_tenant": {
+        "url": "https://images.pexels.com/photos/8101573/pexels-photo-8101573.jpeg",
+        "alt": "Happy young professional tenant",
+        "usage": "Testimonials or tenant portal welcome"
+      },
+      "qr_scan": {
+        "url": "https://images.pexels.com/photos/7289717/pexels-photo-7289717.jpeg",
+        "alt": "Person scanning QR code",
+        "usage": "WhatsApp integration feature section"
+      },
+      "office_exterior": {
+        "url": "https://images.pexels.com/photos/2451622/pexels-photo-2451622.jpeg",
+        "alt": "Modern building exterior",
+        "usage": "Property management section background"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px, rounded caps"
+    }
+  },
+  "motion": {
+    "transitions": {
+      "default": "transition-all duration-200 ease-in-out",
+      "slow": "transition-all duration-500 ease-out"
+    },
+    "animations": {
+      "fade_in": "animate-in fade-in duration-500",
+      "slide_up": "animate-in slide-in-from-bottom-4 duration-500",
+      "pulse_subtle": "animate-pulse"
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure text meets WCAG AA (4.5:1). Use slate-600+ on white.",
+    "focus_states": "Visible focus rings (ring-2 ring-cyan-600) on all interactive elements.",
+    "semantic_html": "Use <main>, <nav>, <header>, <section> appropriately."
+  },
+  "instructions_to_main_agent": [
+    "Use 'Plus Jakarta Sans' for all headings to give a modern Indonesian tech vibe.",
+    "Implement the 'Nusantara Teal' (#0891b2) as the primary brand color.",
+    "For the Dashboard, use the 'Control Room' grid layout: dense, data-rich, but with whitespace.",
+    "For the Landing Page, use the 'Tetris' grid with large typography and the provided images.",
+    "Ensure all forms (Login, Register, Add Property) use Shadcn Form components with Zod validation.",
+    "Use Recharts for the Analytics dashboard (Occupancy Rate, Revenue).",
+    "Implement a responsive sidebar for the dashboard navigation.",
+    "Use the provided image URLs for placeholders. Do not leave empty image blocks.",
+    "Add 'data-testid' to all interactive elements (buttons, inputs, links)."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) sparingly, mainly for overlays.",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Components MUST use named exports",
+    "Pages MUST use default exports",
+    "Use 'sonner' for toasts"
+  ]
+}
