@@ -34,6 +34,8 @@ function App() {
           <Route path="/properties" element={<PrivateRoute><Properties /></PrivateRoute>} />
           <Route path="/rooms" element={<PrivateRoute><Rooms /></PrivateRoute>} />
           <Route path="/tenants" element={<PrivateRoute><Tenants /></PrivateRoute>} />
+          <Route path="/whatsapp" element={<PrivateRoute><WhatsAppCenter /></PrivateRoute>} />
+
           <Route path="/canteen" element={<PrivateRoute><Canteen /></PrivateRoute>} />
           <Route path="/pengelola" element={<PrivateRoute><Pengelola /></PrivateRoute>} />
 
