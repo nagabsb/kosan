@@ -8,6 +8,9 @@ from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 import os
+
+import midtransclient
+
 import uuid
 import base64
 from pathlib import Path
@@ -595,6 +598,103 @@ async def get_canteen_transactions(property_id: Optional[str] = None, current_us
     transactions = await db.canteen_transactions.find(query, {"_id": 0}).to_list(500)
     for trans in transactions:
         if isinstance(trans["created_at"], str):
+
+
+# Midtrans Subscription
+@api_router.post("/subscription/create-payment")
+async def create_subscription_payment(plan_type: str, current_user: dict = Depends(get_current_user)):
+    try:
+        # Initialize Midtrans Snap
+        snap = midtransclient.Snap(
+            is_production=False,
+            server_key=os.getenv("MIDTRANS_SERVER_KEY", "Mid-server-KjLkmtmDX5eVtpYk8U4KxW06"),
+            client_key=os.getenv("MIDTRANS_CLIENT_KEY", "Mid-client-hY67kTUZZIWc3L_P")
+        )
+        
+        # Determine plan details
+        plans = {
+            "basic": {"name": "Basic Plan", "price": 99000},
+            "premium": {"name": "Premium Plan", "price": 199000}
+        }
+        
+        plan = plans.get(plan_type.lower(), plans["basic"])
+        order_id = f"SUB-{current_user['id']}-{uuid.uuid4().hex[:8]}"
+        
+        # Create transaction parameters
+        transaction_details = {
+            "order_id": order_id,
+            "gross_amount": plan["price"]
+        }
+        
+        item_details = [{
+            "id": plan_type.lower(),
+            "price": plan["price"],
+            "quantity": 1,
+            "name": f"ManageKost {plan['name']} - 1 Bulan"
+        }]
+        
+        customer_details = {
+            "first_name": current_user.get("full_name", "User"),
+            "email": current_user.get("email", ""),
+            "phone": current_user.get("phone", "")
+        }
+        
+        param = {
+            "transaction_details": transaction_details,
+            "item_details": item_details,
+            "customer_details": customer_details
+        }
+        
+        # Create Snap transaction
+        transaction = snap.create_transaction(param)
+        
+        # Save subscription record to database
+        subscription_doc = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user["id"],
+            "order_id": order_id,
+            "plan_type": plan_type.lower(),
+            "amount": plan["price"],
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.subscriptions.insert_one(subscription_doc)
+        
+        return {
+            "snap_token": transaction["token"],
+            "redirect_url": transaction["redirect_url"],
+            "order_id": order_id
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create payment: {str(e)}")
+
+@api_router.post("/subscription/webhook")
+async def midtrans_webhook(request: dict):
+    try:
+        # Verify signature here in production
+        order_id = request.get("order_id")
+        transaction_status = request.get("transaction_status")
+        
+        # Update subscription status based on transaction status
+        if transaction_status == "settlement":
+            await db.subscriptions.update_one(
+                {"order_id": order_id},
+                {"$set": {"status": "active"}}
+            )
+            
+            # Update user subscription status
+            subscription = await db.subscriptions.find_one({"order_id": order_id}, {"_id": 0})
+            if subscription:
+                await db.users.update_one(
+                    {"id": subscription["user_id"]},
+                    {"$set": {"subscription_status": "active"}}
+                )
+        
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
             trans["created_at"] = datetime.fromisoformat(trans["created_at"])
         if isinstance(trans["transaction_date"], str):
             trans["transaction_date"] = datetime.fromisoformat(trans["transaction_date"])
