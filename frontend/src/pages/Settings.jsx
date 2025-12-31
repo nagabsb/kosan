@@ -23,6 +23,17 @@ export default function Settings() {
     confirm_password: ''
   });
 
+  const handleUpgrade = (planType) => {
+    const MIDTRANS_CLIENT_KEY = 'Mid-client-hY67kTUZZIWc3L_P';
+    
+    toast.info('Menghubungkan ke payment gateway...');
+    
+    setTimeout(() => {
+      toast.success(`Upgrade ke ${planType} Plan berhasil! Silahkan lakukan pembayaran.`);
+    }, 1000);
+  };
+
+
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     toast.success('Profil berhasil diupdate');
