@@ -51,6 +51,9 @@ class UserCreate(BaseModel):
     full_name: str
     phone: str
     role: str = "owner"
+    property_name: Optional[str] = None
+    city: Optional[str] = None
+    total_rooms: Optional[int] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -272,6 +275,11 @@ async def register(user_data: UserCreate):
     
     hashed_password = get_password_hash(user_data.password)
     user_dict = user_data.model_dump()
+    
+    # Remove property fields from user data
+    property_name = user_dict.pop("property_name", None)
+    city = user_dict.pop("city", None)
+    total_rooms = user_dict.pop("total_rooms", None)
     user_dict.pop("password")
     
     user = User(**user_dict)
@@ -283,6 +291,19 @@ async def register(user_data: UserCreate):
     doc["trial_end_date"] = doc["trial_end_date"].isoformat()
     
     await db.users.insert_one(doc)
+    
+    # Auto-create first property if data provided
+    if property_name and city and total_rooms:
+        property_obj = Property(
+            owner_id=user.id,
+            name=property_name,
+            address=city,
+            total_rooms=total_rooms,
+            description=f"Properti kost di {city}"
+        )
+        property_doc = property_obj.model_dump()
+        property_doc["created_at"] = property_doc["created_at"].isoformat()
+        await db.properties.insert_one(property_doc)
     
     access_token = create_access_token({"sub": user.id, "email": user.email})
     return {"access_token": access_token, "user": user.model_dump()}
