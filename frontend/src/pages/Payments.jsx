@@ -28,7 +28,8 @@ export default function Payments() {
     amount: '',
     payment_date: new Date().toISOString().split('T')[0],
     payment_method: 'transfer',
-    notes: ''
+    notes: '',
+    proof_file: null
   });
 
   useEffect(() => {
@@ -57,23 +58,64 @@ export default function Payments() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/payments', {
-        ...formData,
-        amount: parseFloat(formData.amount),
-        payment_date: new Date(formData.payment_date).toISOString()
-      });
-      toast.success('Pembayaran berhasil dicatat');
-      setShowDialog(false);
-      setFormData({
-        tenant_id: '',
-        property_id: '',
-        room_id: '',
-        amount: '',
-        payment_date: new Date().toISOString().split('T')[0],
-        payment_method: 'transfer',
-        notes: ''
-      });
-      loadData();
+      // Simulate file upload - in production, upload to cloud storage (S3, Cloudinary, etc)
+      let proofUrl = null;
+      if (formData.proof_file) {
+        // Convert to base64 for demo purposes
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          proofUrl = reader.result;
+          
+          await api.post('/payments', {
+            tenant_id: formData.tenant_id,
+            property_id: formData.property_id,
+            room_id: formData.room_id,
+            amount: parseFloat(formData.amount),
+            payment_date: new Date(formData.payment_date).toISOString(),
+            payment_method: formData.payment_method,
+            notes: formData.notes,
+            proof_url: proofUrl
+          });
+          
+          toast.success('Pembayaran berhasil dicatat dengan bukti transfer');
+          setShowDialog(false);
+          setFormData({
+            tenant_id: '',
+            property_id: '',
+            room_id: '',
+            amount: '',
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_method: 'transfer',
+            notes: '',
+            proof_file: null
+          });
+          loadData();
+        };
+        reader.readAsDataURL(formData.proof_file);
+      } else {
+        await api.post('/payments', {
+          tenant_id: formData.tenant_id,
+          property_id: formData.property_id,
+          room_id: formData.room_id,
+          amount: parseFloat(formData.amount),
+          payment_date: new Date(formData.payment_date).toISOString(),
+          payment_method: formData.payment_method,
+          notes: formData.notes
+        });
+        toast.success('Pembayaran berhasil dicatat');
+        setShowDialog(false);
+        setFormData({
+          tenant_id: '',
+          property_id: '',
+          room_id: '',
+          amount: '',
+          payment_date: new Date().toISOString().split('T')[0],
+          payment_method: 'transfer',
+          notes: '',
+          proof_file: null
+        });
+        loadData();
+      }
     } catch (error) {
       toast.error('Gagal mencatat pembayaran');
     }
@@ -225,6 +267,16 @@ export default function Payments() {
                                 </TableCell>
                                 <TableCell>
                                   <div className="flex gap-2">
+                                    {payment.proof_url && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => window.open(payment.proof_url, '_blank')}
+                                      >
+                                        <Upload className="w-4 h-4 mr-1" />
+                                        Lihat Bukti
+                                      </Button>
+                                    )}
                                     <Button
                                       size="sm"
                                       className="bg-green-600 hover:bg-green-700"
@@ -391,6 +443,26 @@ export default function Payments() {
                     required
                   />
                 </div>
+              </div>
+              <div>
+                <Label htmlFor="proof_file">Upload Bukti Transfer (Opsional)</Label>
+                <Input
+                  id="proof_file"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFormData({ ...formData, proof_file: e.target.files[0] })}
+                  className="mt-1"
+                />
+                <p className="text-xs text-slate-500 mt-1">Format: JPG, PNG (Max 5MB)</p>
+              </div>
+              <div>
+                <Label htmlFor="notes">Catatan (Opsional)</Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Catatan tambahan..."
+                />
               </div>
               <div className="flex gap-3">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setShowDialog(false)}>
