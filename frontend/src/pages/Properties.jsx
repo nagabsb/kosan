@@ -14,6 +14,8 @@ export default function Properties() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -40,16 +42,28 @@ export default function Properties() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/properties', {
-        ...formData,
-        total_rooms: parseInt(formData.total_rooms)
-      });
-      toast.success('Properti berhasil ditambahkan');
+      if (editMode && selectedProperty) {
+        // Update existing property
+        await api.put(`/properties/${selectedProperty.id}`, {
+          ...formData,
+          total_rooms: parseInt(formData.total_rooms)
+        });
+        toast.success('Properti berhasil diupdate');
+      } else {
+        // Create new property
+        await api.post('/properties', {
+          ...formData,
+          total_rooms: parseInt(formData.total_rooms)
+        });
+        toast.success('Properti berhasil ditambahkan');
+      }
       setShowDialog(false);
+      setEditMode(false);
+      setSelectedProperty(null);
       setFormData({ name: '', address: '', total_rooms: '', description: '', facilities: [] });
       loadProperties();
     } catch (error) {
-      toast.error('Gagal menambahkan properti');
+      toast.error(editMode ? 'Gagal mengupdate properti' : 'Gagal menambahkan properti');
     }
   };
 
@@ -64,6 +78,26 @@ export default function Properties() {
     }
   };
 
+  const handleEdit = (property) => {
+    setEditMode(true);
+    setSelectedProperty(property);
+    setFormData({
+      name: property.name,
+      address: property.address,
+      total_rooms: property.total_rooms.toString(),
+      description: property.description || '',
+      facilities: property.facilities || []
+    });
+    setShowDialog(true);
+  };
+
+  const handleAddNew = () => {
+    setEditMode(false);
+    setSelectedProperty(null);
+    setFormData({ name: '', address: '', total_rooms: '', description: '', facilities: [] });
+    setShowDialog(true);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6" data-testid="properties-page">
@@ -72,7 +106,7 @@ export default function Properties() {
             <h1 className="text-3xl font-bold text-slate-900">Manajemen Properti</h1>
             <p className="text-slate-600 mt-1">Kelola semua properti kost Anda</p>
           </div>
-          <Button onClick={() => setShowDialog(true)} className="bg-cyan-600 hover:bg-cyan-700" data-testid="add-property-btn">
+          <Button onClick={handleAddNew} className="bg-blue-700 hover:bg-blue-800" data-testid="add-property-btn">
             <Plus className="w-4 h-4 mr-2" />
             Tambah Properti
           </Button>
@@ -86,7 +120,7 @@ export default function Properties() {
               <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-slate-900 mb-2">Belum ada properti</h3>
               <p className="text-slate-600 mb-6">Mulai dengan menambahkan properti kost pertama Anda</p>
-              <Button onClick={() => setShowDialog(true)} className="bg-cyan-600 hover:bg-cyan-700">
+              <Button onClick={handleAddNew} className="bg-blue-700 hover:bg-blue-800">
                 <Plus className="w-4 h-4 mr-2" />
                 Tambah Properti
               </Button>
@@ -121,11 +155,11 @@ export default function Properties() {
                     <p className="text-sm text-slate-600 line-clamp-2">{property.description}</p>
                   )}
                   <div className="flex gap-2 pt-3">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEdit(property)} data-testid={`edit-property-${property.id}`}>
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(property.id)}>
+                    <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(property.id)} data-testid={`delete-property-${property.id}`}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -138,7 +172,7 @@ export default function Properties() {
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Tambah Properti Baru</DialogTitle>
+              <DialogTitle>{editMode ? 'Edit Properti' : 'Tambah Properti Baru'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -186,11 +220,15 @@ export default function Properties() {
                 />
               </div>
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setShowDialog(false)}>
+                <Button type="button" variant="outline" className="flex-1" onClick={() => {
+                  setShowDialog(false);
+                  setEditMode(false);
+                  setSelectedProperty(null);
+                }}>
                   Batal
                 </Button>
-                <Button type="submit" className="flex-1 bg-cyan-600 hover:bg-cyan-700" data-testid="property-submit-btn">
-                  Simpan
+                <Button type="submit" className="flex-1 bg-blue-700 hover:bg-blue-800" data-testid="property-submit-btn">
+                  {editMode ? 'Update' : 'Simpan'}
                 </Button>
               </div>
             </form>
