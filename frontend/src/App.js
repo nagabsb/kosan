@@ -9,6 +9,8 @@ import Properties from './pages/Properties';
 import Rooms from './pages/Rooms';
 import Tenants from './pages/Tenants';
 import Payments from './pages/Payments';
+import Canteen from './pages/Canteen';
+import Pengelola from './pages/Pengelola';
 import Complaints from './pages/Complaints';
 import UtilityMeters from './pages/UtilityMeters';
 import Settings from './pages/Settings';
@@ -31,6 +33,9 @@ function App() {
           <Route path="/properties" element={<PrivateRoute><Properties /></PrivateRoute>} />
           <Route path="/rooms" element={<PrivateRoute><Rooms /></PrivateRoute>} />
           <Route path="/tenants" element={<PrivateRoute><Tenants /></PrivateRoute>} />
+          <Route path="/canteen" element={<PrivateRoute><Canteen /></PrivateRoute>} />
+          <Route path="/pengelola" element={<PrivateRoute><Pengelola /></PrivateRoute>} />
+
           <Route path="/payments" element={<PrivateRoute><Payments /></PrivateRoute>} />
           <Route path="/complaints" element={<PrivateRoute><Complaints /></PrivateRoute>} />
           <Route path="/utility-meters" element={<PrivateRoute><UtilityMeters /></PrivateRoute>} />
