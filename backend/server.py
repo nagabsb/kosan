@@ -443,6 +443,175 @@ async def get_payments(property_id: Optional[str] = None, current_user: dict = D
     if property_id:
         query["property_id"] = property_id
     payments = await db.payments.find(query, {"_id": 0}).to_list(500)
+
+# Pengelola Management
+@api_router.post("/pengelola")
+async def create_pengelola(pengelola_data: PengelolaCreate, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "owner":
+        raise HTTPException(status_code=403, detail="Only owner can add pengelola")
+    
+    existing = await db.users.find_one({"email": pengelola_data.email}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    hashed_password = get_password_hash(pengelola_data.password)
+    
+    pengelola = User(
+        email=pengelola_data.email,
+        full_name=pengelola_data.full_name,
+        phone=pengelola_data.phone,
+        role="pengelola",
+        owner_id=current_user["id"],
+        is_owner=False,
+        permissions=pengelola_data.permissions
+    )
+    
+    doc = pengelola.model_dump()
+    doc["password"] = hashed_password
+    doc["created_at"] = doc["created_at"].isoformat()
+    
+    await db.users.insert_one(doc)
+    
+    return {"message": "Pengelola berhasil ditambahkan", "pengelola_id": pengelola.id}
+
+@api_router.get("/pengelola")
+async def get_pengelola_list(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "owner":
+        raise HTTPException(status_code=403, detail="Only owner can view pengelola list")
+    
+    pengelola_list = await db.users.find(
+        {"owner_id": current_user["id"], "role": "pengelola"},
+        {"_id": 0, "password": 0}
+    ).to_list(100)
+    
+    for p in pengelola_list:
+        if isinstance(p["created_at"], str):
+            p["created_at"] = datetime.fromisoformat(p["created_at"])
+    
+    return pengelola_list
+
+@api_router.delete("/pengelola/{pengelola_id}")
+async def delete_pengelola(pengelola_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user["role"] != "owner":
+        raise HTTPException(status_code=403, detail="Only owner can delete pengelola")
+    
+    result = await db.users.delete_one({"id": pengelola_id, "owner_id": current_user["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Pengelola not found")
+    
+    return {"message": "Pengelola berhasil dihapus"}
+
+# Canteen Products
+@api_router.post("/canteen/products", response_model=CanteenProduct)
+async def create_canteen_product(product_data: CanteenProductCreate, current_user: dict = Depends(get_current_user)):
+    product = CanteenProduct(**product_data.model_dump())
+    doc = product.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.canteen_products.insert_one(doc)
+    return product
+
+@api_router.get("/canteen/products", response_model=List[CanteenProduct])
+async def get_canteen_products(property_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if property_id:
+        query["property_id"] = property_id
+    
+    products = await db.canteen_products.find(query, {"_id": 0}).to_list(500)
+    for product in products:
+        if isinstance(product["created_at"], str):
+            product["created_at"] = datetime.fromisoformat(product["created_at"])
+    return products
+
+@api_router.put("/canteen/products/{product_id}")
+async def update_canteen_product(product_id: str, updates: dict, current_user: dict = Depends(get_current_user)):
+    result = await db.canteen_products.update_one({"id": product_id}, {"$set": updates})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Product updated successfully"}
+
+@api_router.delete("/canteen/products/{product_id}")
+async def delete_canteen_product(product_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.canteen_products.delete_one({"id": product_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Product deleted successfully"}
+
+# Canteen Transactions
+@api_router.post("/canteen/transactions", response_model=CanteenTransaction)
+async def create_canteen_transaction(transaction_data: CanteenTransactionCreate, current_user: dict = Depends(get_current_user)):
+    # Get product to calculate price
+    product = await db.canteen_products.find_one({"id": transaction_data.product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    total_price = product["price"] * transaction_data.quantity
+    
+    transaction = CanteenTransaction(
+        **transaction_data.model_dump(),
+        total_price=total_price
+    )
+    
+    doc = transaction.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    doc["transaction_date"] = doc["transaction_date"].isoformat()
+    await db.canteen_transactions.insert_one(doc)
+    
+    # Update stock
+    new_stock = product["stock"] - transaction_data.quantity
+    await db.canteen_products.update_one(
+        {"id": transaction_data.product_id},
+        {"$set": {"stock": new_stock, "is_available": new_stock > 0}}
+    )
+    
+    return transaction
+
+@api_router.get("/canteen/transactions", response_model=List[CanteenTransaction])
+async def get_canteen_transactions(property_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {}
+    if property_id:
+        query["property_id"] = property_id
+    
+    transactions = await db.canteen_transactions.find(query, {"_id": 0}).to_list(500)
+    for trans in transactions:
+        if isinstance(trans["created_at"], str):
+            trans["created_at"] = datetime.fromisoformat(trans["created_at"])
+        if isinstance(trans["transaction_date"], str):
+            trans["transaction_date"] = datetime.fromisoformat(trans["transaction_date"])
+    return transactions
+
+@api_router.get("/canteen/sales-report")
+async def get_canteen_sales_report(property_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    query = {} if not property_id else {"property_id": property_id}
+    
+    # Total revenue
+    total_revenue = await db.canteen_transactions.aggregate([
+        {"$match": query},
+        {"$group": {"_id": None, "total": {"$sum": "$total_price"}}}
+    ]).to_list(1)
+    
+    revenue = total_revenue[0]["total"] if total_revenue else 0
+    
+    # Total transactions
+    total_transactions = await db.canteen_transactions.count_documents(query)
+    
+    # Top products
+    top_products = await db.canteen_transactions.aggregate([
+        {"$match": query},
+        {"$group": {
+            "_id": "$product_id",
+            "total_quantity": {"$sum": "$quantity"},
+            "total_revenue": {"$sum": "$total_price"}
+        }},
+        {"$sort": {"total_quantity": -1}},
+        {"$limit": 5}
+    ]).to_list(5)
+    
+    return {
+        "total_revenue": revenue,
+        "total_transactions": total_transactions,
+        "top_products": top_products
+    }
+
     for payment in payments:
         if isinstance(payment["created_at"], str):
             payment["created_at"] = datetime.fromisoformat(payment["created_at"])
