@@ -23,14 +23,63 @@ export default function Settings() {
     confirm_password: ''
   });
 
-  const handleUpgrade = (planType) => {
+  const handleUpgrade = async (planType) => {
     const MIDTRANS_CLIENT_KEY = 'Mid-client-hY67kTUZZIWc3L_P';
     
-    toast.info('Menghubungkan ke payment gateway...');
-    
-    setTimeout(() => {
-      toast.success(`Upgrade ke ${planType} Plan berhasil! Silahkan lakukan pembayaran.`);
-    }, 1000);
+    try {
+      toast.info('Membuat link pembayaran...');
+      
+      // Call backend to create payment
+      const response = await api.post(`/subscription/create-payment?plan_type=${planType}`);
+      const { snap_token, redirect_url } = response.data;
+      
+      // Load Midtrans Snap script if not loaded
+      if (!window.snap) {
+        const script = document.createElement('script');
+        script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+        script.setAttribute('data-client-key', MIDTRANS_CLIENT_KEY);
+        document.head.appendChild(script);
+        
+        script.onload = () => {
+          window.snap.pay(snap_token, {
+            onSuccess: function(result) {
+              toast.success('Pembayaran berhasil! Subscription Anda aktif.');
+              console.log('Payment success:', result);
+            },
+            onPending: function(result) {
+              toast.info('Menunggu pembayaran...');
+              console.log('Payment pending:', result);
+            },
+            onError: function(result) {
+              toast.error('Pembayaran gagal');
+              console.log('Payment error:', result);
+            },
+            onClose: function() {
+              toast.info('Popup pembayaran ditutup');
+            }
+          });
+        };
+      } else {
+        // Snap already loaded
+        window.snap.pay(snap_token, {
+          onSuccess: function(result) {
+            toast.success('Pembayaran berhasil! Subscription Anda aktif.');
+          },
+          onPending: function(result) {
+            toast.info('Menunggu pembayaran...');
+          },
+          onError: function(result) {
+            toast.error('Pembayaran gagal');
+          },
+          onClose: function() {
+            toast.info('Popup pembayaran ditutup');
+          }
+        });
+      }
+      
+    } catch (error) {
+      toast.error('Gagal membuat pembayaran: ' + (error.response?.data?.detail || error.message));
+    }
   };
 
 
