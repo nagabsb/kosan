@@ -10,6 +10,7 @@ import Rooms from './pages/Rooms';
 import Tenants from './pages/Tenants';
 import Payments from './pages/Payments';
 import Canteen from './pages/Canteen';
+import WhatsAppCenter from './pages/WhatsAppCenter';
 import Pengelola from './pages/Pengelola';
 import Complaints from './pages/Complaints';
 import UtilityMeters from './pages/UtilityMeters';

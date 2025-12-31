@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Building2, Home, BedDouble, Users, DollarSign, AlertCircle, Zap, Settings, LogOut, ShoppingBag, UserCog } from 'lucide-react';
+import { Building2, Home, BedDouble, Users, DollarSign, AlertCircle, Zap, Settings, LogOut, ShoppingBag, UserCog, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '../store/authStore';
 
@@ -21,6 +21,7 @@ export default function DashboardLayout({ children }) {
     { path: '/tenants', label: 'Penghuni', icon: Users },
     { path: '/payments', label: 'Pembayaran', icon: DollarSign },
     { path: '/canteen', label: 'Kantin', icon: ShoppingBag },
+    { path: '/whatsapp', label: 'WhatsApp', icon: MessageCircle },
     { path: '/complaints', label: 'Keluhan', icon: AlertCircle },
     { path: '/utility-meters', label: 'Meteran', icon: Zap },
   ];
