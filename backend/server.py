@@ -699,11 +699,6 @@ async def midtrans_webhook(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-            trans["created_at"] = datetime.fromisoformat(trans["created_at"])
-        if isinstance(trans["transaction_date"], str):
-            trans["transaction_date"] = datetime.fromisoformat(trans["transaction_date"])
-    return transactions
-
 @api_router.get("/canteen/sales-report")
 async def get_canteen_sales_report(property_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     query = {} if not property_id else {"property_id": property_id}
