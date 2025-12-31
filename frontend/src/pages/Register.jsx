@@ -17,7 +17,10 @@ export default function Register() {
     password: '',
     full_name: '',
     phone: '',
-    role: 'owner'
+    role: 'owner',
+    property_name: '',
+    city: '',
+    total_rooms: ''
   });
 
   const handleSubmit = async (e) => {
@@ -50,6 +53,11 @@ export default function Register() {
 
         <div className="bg-white rounded-xl shadow-md border border-slate-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="mb-4">
+              <h3 className="font-semibold text-slate-900 mb-1">Data Diri</h3>
+              <p className="text-sm text-slate-600">Informasi akun Anda</p>
+            </div>
+
             <div>
               <Label htmlFor="full_name">Nama Lengkap</Label>
               <Input
@@ -64,32 +72,34 @@ export default function Register() {
               />
             </div>
 
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-                className="mt-1"
-                data-testid="register-email-input"
-              />
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nama@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="mt-1"
+                  data-testid="register-email-input"
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="phone">Nomor WhatsApp</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="08123456789"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                required
-                className="mt-1"
-                data-testid="register-phone-input"
-              />
+              <div>
+                <Label htmlFor="phone">Nomor WhatsApp</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="08123456789"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required
+                  className="mt-1"
+                  data-testid="register-phone-input"
+                />
+              </div>
             </div>
 
             <div>
@@ -106,9 +116,60 @@ export default function Register() {
               />
             </div>
 
+            <div className="border-t border-slate-200 pt-5 mt-6">
+              <h3 className="font-semibold text-slate-900 mb-1">Data Kost</h3>
+              <p className="text-sm text-slate-600 mb-4">Informasi properti kost pertama Anda</p>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="property_name">Nama Kost</Label>
+                  <Input
+                    id="property_name"
+                    type="text"
+                    placeholder="Kost Melati"
+                    value={formData.property_name}
+                    onChange={(e) => setFormData({ ...formData, property_name: e.target.value })}
+                    required
+                    className="mt-1"
+                    data-testid="register-property-name-input"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">Kota</Label>
+                    <Input
+                      id="city"
+                      type="text"
+                      placeholder="Jakarta"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      required
+                      className="mt-1"
+                      data-testid="register-city-input"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="total_rooms">Jumlah Kamar</Label>
+                    <Input
+                      id="total_rooms"
+                      type="number"
+                      placeholder="10"
+                      value={formData.total_rooms}
+                      onChange={(e) => setFormData({ ...formData, total_rooms: e.target.value })}
+                      required
+                      className="mt-1"
+                      data-testid="register-rooms-input"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <Button
               type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-800"
+              className="w-full bg-blue-700 hover:bg-blue-800 mt-6"
               disabled={loading}
               data-testid="register-submit-btn"
             >
