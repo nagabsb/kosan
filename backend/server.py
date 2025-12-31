@@ -598,6 +598,10 @@ async def get_canteen_transactions(property_id: Optional[str] = None, current_us
     transactions = await db.canteen_transactions.find(query, {"_id": 0}).to_list(500)
     for trans in transactions:
         if isinstance(trans["created_at"], str):
+            trans["created_at"] = datetime.fromisoformat(trans["created_at"])
+        if isinstance(trans["transaction_date"], str):
+            trans["transaction_date"] = datetime.fromisoformat(trans["transaction_date"])
+    return transactions
 
 
 # Midtrans Subscription
