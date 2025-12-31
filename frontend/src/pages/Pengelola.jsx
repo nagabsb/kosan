@@ -228,12 +228,12 @@ export default function Pengelola() {
                     <SelectValue placeholder="Semua Properti" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Semua Properti</SelectItem>
                     {properties.map((prop) => (
                       <SelectItem key={prop.id} value={prop.id}>{prop.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-slate-500 mt-1">Kosongkan jika akses ke semua properti</p>
               </div>
               <div className="flex gap-3">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setShowDialog(false)}>
