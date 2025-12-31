@@ -35,16 +35,15 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-50 shadow-sm">
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-blue-700 to-sky-600">
+      <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-50 shadow-sm flex flex-col">
+        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-blue-700 to-sky-600 flex-shrink-0">
           <div className="flex items-center gap-2">
             <Building2 className="w-8 h-8 text-white" />
             <span className="text-2xl font-bold text-white">ManageKost</span>
           </div>
         </div>
 
-        <nav className="p-4 space-y-1">
-          {menuItems.map((item) => {
+        <nav className="p-4 space-y-1 flex-1 overflow-y-auto">{menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
             return (
@@ -65,7 +64,7 @@ export default function DashboardLayout({ children }) {
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-200 bg-slate-50">
+        <div className="p-4 border-t border-slate-200 bg-slate-50 flex-shrink-0">
           <div className="mb-3 px-4">
             <p className="text-sm font-medium text-slate-900">{user?.full_name}</p>
             <p className="text-xs text-slate-500">{user?.email}</p>
