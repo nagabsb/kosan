@@ -48,8 +48,8 @@ export default function Pengelola() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/pengelola', formData);
-      toast.success('Pengelola berhasil ditambahkan');
+      const response = await api.post('/pengelola', formData);
+      toast.success(response.data.message || 'Pengelola berhasil ditambahkan');
       setShowDialog(false);
       setFormData({
         email: '',
@@ -61,7 +61,8 @@ export default function Pengelola() {
       });
       loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Gagal menambahkan pengelola');
+      const errorMsg = error.response?.data?.detail || 'Gagal menambahkan pengelola';
+      toast.error(typeof errorMsg === 'string' ? errorMsg : 'Gagal menambahkan pengelola');
     }
   };
 
