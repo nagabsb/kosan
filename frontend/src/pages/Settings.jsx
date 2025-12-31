@@ -180,16 +180,17 @@ export default function Settings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <div className="border border-slate-200 rounded-lg p-6">
-                    <h3 className="font-semibold text-lg text-slate-900 mb-2">Basic Plan</h3>
-                    <div className="text-3xl font-bold text-slate-900 mb-4">Rp 99.000<span className="text-sm font-normal text-slate-600">/bulan</span></div>
-                    <ul className="space-y-2 text-sm text-slate-600">
-                      <li>✅ Hingga 3 properti</li>
-                      <li>✅ Unlimited kamar</li>
-                      <li>✅ Management penghuni</li>
-                      <li>✅ Dashboard analytics</li>
-                    </ul>
-                    <Button variant="outline" className="w-full mt-6">Pilih Plan</Button>
-                  </div>
+                    <div>
+                      <h3 className="font-semibold text-lg text-slate-900 mb-2">Basic Plan</h3>
+                      <div className="text-3xl font-bold text-slate-900 mb-4">Rp 99.000<span className="text-sm font-normal text-slate-600">/bulan</span></div>
+                      <ul className="space-y-2 text-sm text-slate-600">
+                        <li>✅ Hingga 3 properti</li>
+                        <li>✅ Unlimited kamar</li>
+                        <li>✅ Management penghuni</li>
+                        <li>✅ Dashboard analytics</li>
+                      </ul>
+                      <Button variant="outline" className="w-full mt-6" onClick={() => handleUpgrade('Basic')}>Pilih Plan</Button>
+                    </div>
 
                   <div className="border-2 border-blue-600 rounded-lg p-6 relative">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -197,14 +198,14 @@ export default function Settings() {
                     </div>
                     <h3 className="font-semibold text-lg text-slate-900 mb-2">Premium Plan</h3>
                     <div className="text-3xl font-bold text-slate-900 mb-4">Rp 199.000<span className="text-sm font-normal text-slate-600">/bulan</span></div>
-                    <ul className="space-y-2 text-sm text-slate-600">
+                    <ul className="space-y-2 text-slate-600">
                       <li>✅ Unlimited properti</li>
                       <li>✅ Unlimited kamar</li>
                       <li>✅ WhatsApp integration</li>
                       <li>✅ Email notifications</li>
                       <li>✅ Priority support</li>
                     </ul>
-                    <Button className="w-full mt-6 bg-blue-700 hover:bg-blue-800">Pilih Plan</Button>
+                    <Button className="w-full mt-6 bg-blue-700 hover:bg-blue-800" onClick={() => handleUpgrade('Premium')}>Pilih Plan</Button>
                   </div>
                 </div>
               </CardContent>
