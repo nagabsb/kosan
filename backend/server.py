@@ -37,10 +37,12 @@ class User(BaseModel):
     email: EmailStr
     full_name: str
     phone: str
-    role: str
+    role: str  # owner, pengelola
+    owner_id: Optional[str] = None  # untuk pengelola, ini ID owner yang invite
     is_owner: bool = True
     subscription_status: str = "trial"
     trial_end_date: Optional[datetime] = None
+    permissions: List[str] = []  # untuk pengelola: ["manage_rooms", "manage_tenants", dll]
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserCreate(BaseModel):
@@ -98,6 +100,53 @@ class Tenant(BaseModel):
     room_id: str
     full_name: str
     email: EmailStr
+
+class CanteenProduct(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    property_id: str
+    name: str
+    price: float
+    stock: int
+    category: str = "makanan"  # makanan, minuman, snack, dll
+    photo_url: Optional[str] = None
+    is_available: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CanteenProductCreate(BaseModel):
+    property_id: str
+    name: str
+    price: float
+    stock: int
+    category: str = "makanan"
+
+class CanteenTransaction(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    property_id: str
+    product_id: str
+    tenant_id: Optional[str] = None
+    quantity: int
+    total_price: float
+    transaction_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CanteenTransactionCreate(BaseModel):
+    property_id: str
+    product_id: str
+    tenant_id: Optional[str] = None
+    quantity: int
+    notes: Optional[str] = None
+
+class PengelolaCreate(BaseModel):
+    email: EmailStr
+    full_name: str
+    phone: str
+    password: str
+    property_id: str
+    permissions: List[str] = ["manage_rooms", "manage_tenants"]
+
     phone: str
     id_card_number: str
     check_in_date: datetime
