@@ -34,18 +34,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Building2 className="w-10 h-10 text-cyan-600" />
-            <span className="text-3xl font-bold text-slate-900">Kostify</span>
+            <Building2 className="w-10 h-10 text-blue-700" />
+            <span className="text-3xl font-bold text-slate-900">ManageKost</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Selamat Datang Kembali</h1>
           <p className="text-slate-600">Masuk ke dashboard management kost Anda</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+        <div className="bg-white rounded-xl shadow-md border border-slate-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="email">Email</Label>
@@ -56,6 +56,7 @@ export default function Login() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
+                className="mt-1"
                 data-testid="login-email-input"
               />
             </div>
@@ -69,13 +70,14 @@ export default function Login() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
+                className="mt-1"
                 data-testid="login-password-input"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-cyan-600 hover:bg-cyan-700"
+              className="w-full bg-blue-700 hover:bg-blue-800"
               disabled={loading}
               data-testid="login-submit-btn"
             >
@@ -87,7 +89,7 @@ export default function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-600">
               Belum punya akun?{' '}
-              <Link to="/register" className="text-cyan-600 hover:underline font-medium">
+              <Link to="/register" className="text-blue-700 hover:underline font-medium">
                 Daftar Sekarang
               </Link>
             </p>
